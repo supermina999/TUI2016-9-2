@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="js/paper-full.min.js"></script>
+
+<script type="text/paperscript" canvas="myCanvas">
+
+ function geksa(centre, radiussa, coords){
+	 var path = new Path()
+	 path.closed = true
+	 for(var i=0; i<6; i++){
+		 var point = new Point({
+        length: radiussa,
+				angle: 360 * i / 6
+		 })
+		 path.add(centre + point);
+		 console.log(point)
+	 }
+   path.strokeColor = 'red'
+	 path.fillColor = 'grey'
+   path.strokeWidth = 3
+   path.coords = coords
+	 return path
+ }
+
+
+
+ function drawe(row, column, radius){
+
+  var yradius = Math.sin(Math.PI / 3) * radius
+
+	 for(var i = 0; i<row; i++){
+       for(var j=0; j<column; j++){
+				  if(j % 2 === 0){
+				    geksa(new Point(radius + 1.5 * j * radius, yradius * (2*i+1)) ,radius, {"r" : i, "c": j})
+          } else geksa(new Point(radius + 1.5 * j * radius, yradius + yradius * (2*i+1)) ,radius, {"r" : i, "c": j})
+			 }
+	 }
+
+ }
+
+drawe(60,72,30)
+
+var hitOptions = {
+	segments: true,
+	stroke: true,
+	fill: true,
+	tolerance: 5
+}
+
+function onMouseDown(event) {
+	segment = path = null;
+	var hitResult = project.hitTest(event.point, hitOptions);
+	if (!hitResult) {
+		return;
+  }
+
+  if (hitResult) {
+    		path = hitResult.item;
+        if (path.fillColor == 'yellow') {
+          path.fillColor = 'green'
+        } else {
+        path.fillColor = 'yellow'
+        }
+      }
+  }
+
+function logger(txt) {
+  document.getElementById('log').innerHTML += txt + "<br/>"
+}
+
+</script>
+</head>
+<body>
+  <div style="display:block;"><span id="log" style="vertical-align:top"/></div>
+
+	<canvas id="myCanvas" resize="true" height="1000" width="1000" contenteditable="true"></canvas>
+</body>
+</html>
